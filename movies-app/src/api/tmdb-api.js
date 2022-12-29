@@ -23,8 +23,14 @@ export const getMovies = (args) => {
   if (!genre){
     genre = -1;	
   }
+
   return fetch(
-    `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&include_adult=false&include_video=false&page=${pagePart}&with_genres=${genre}&sort_by=${sorting}`
+    `http://localhost:8080/api/movies?page=${pagePart}&with_genres=${genre}&sort_by=${sorting}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_TMDB_KEY }`
+      }
+    }
   ).then((response) => {
     if (!response.ok) {
       throw new Error(response.json().message);
@@ -35,6 +41,7 @@ export const getMovies = (args) => {
       throw error
   });
 };
+
 
 export const getMovie = (args) => {
   const [, idPart] = args.queryKey;
