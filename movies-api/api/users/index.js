@@ -57,28 +57,4 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-
-router.post('/:userName/favourites', asyncHandler(async (req, res) => {
-  //Check if the favourite already exists
-  const userName = req.params.userName;
-  const user = await User.findByUserName(userName);
-  const movie = await movieModel.findByMovieDBId(newFavourite);
-  const movieId = movie.id;
-  const newFavourite = req.body.id;
-
-  if (user.favourites.includes(movieId)) {
-    res.status(401).json({success: false, msg: 'Movie already in favourites.'});
-  } else {
-    user.favourites.push(movieId);
-    await user.save();
-    res.status(201).json(user); 
-  }
-}));
-
-router.get('/:userName/favourites', asyncHandler( async (req, res) => {
-  const userName = req.params.userName;
-  const user = await User.findByUserName(userName).populate('favourites');
-  res.status(200).json(user.favourites);
-}));
-
 export default router;
