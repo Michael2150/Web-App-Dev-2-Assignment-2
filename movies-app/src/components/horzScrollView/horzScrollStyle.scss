@@ -1,0 +1,15 @@
+::-webkit-scrollbar {
+    width: 10;
+}
+  
+.container {
+    display: flex;
+    overflow-x: scroll;
+    width: 100%;
+}
+
+.card {
+    display: inline-block;
+    margin: 0px 10px;
+    min-width: 300px;
+}
