@@ -47,37 +47,90 @@ const MovieSchema = new mongoose.Schema({
   title: { type: String },
   video: { type: Boolean },
   vote_average: { type: Number },
-  vote_count: { type: Number }
+  vote_count: { type: Number },
+  isUpcoming: { type: Boolean },
 });
 
-const compactMovieFields = { _id: 0, adult: 1, backdrop_path: 1, genre_ids: 1, id: 1, original_language: 1, original_title: 1, overview: 1, popularity: 1, poster_path: 1, release_date: 1, title: 1, video: 1, vote_average: 1, vote_count: 1 }
+const compactMovieFields = { 
+   _id: 0,
+   adult: 1,
+   backdrop_path: 1, 
+   genre_ids: "$genres.id", 
+   id: 1, 
+   original_language: 1, 
+   original_title: 1, 
+   overview: 1, 
+   popularity: 1, 
+   poster_path: 1, 
+   title: 1, 
+   video: 1, 
+   release_date: { $dateToString: { format: "%Y-%m-%d", date: "$release_date" } }, 
+   vote_average: 1, 
+   vote_count: 1 
+  }
 
 MovieSchema.statics.findByMovieDBId = function (id) {
   return this.findOne({ id: id });
 };
 
-MovieSchema.statics.getPageMovies = function (page, perPage, genre, sortingCode){
+MovieSchema.statics.getPageMovies = function (page, perPage, genre, sortingCode, isUpcoming) {
   // Split the sorting code into the field and direction
   const [sortField, sortDirection] = sortingCode.split(".");
 
   //Return all movies
-  //Genre could be undefined
-  if (genre == undefined) {
-    return this.find({}, compactMovieFields)
-    .sort({[sortField]: sortDirection == "asc" ? 1 : -1 })
-    .skip((page - 1) * perPage)
-    .limit(perPage);
-  } else {
-    return this.find({ "genres.id":
-      { $in: genre } }, compactMovieFields)
-      .sort({[sortField]: sortDirection == "asc" ? 1 : -1 })
-      .skip((page - 1) * perPage)
-      .limit(perPage);
-  }
+  return this.aggregate([
+    {
+        $match: genre == -1 || genre == undefined
+          ? {
+              isUpcoming: isUpcoming
+          }
+          : {
+              isUpcoming: isUpcoming,
+              genres: {
+                $elemMatch: {
+                  id: genre
+                }
+              }
+            }
+    },
+    {
+      $sort: {
+        [sortField]: sortDirection == "asc" ? 1 : -1
+      }
+    },
+    {
+      $project: compactMovieFields
+    },
+    {
+      $skip: (page - 1) * perPage
+    },
+    {
+      $limit: perPage
+    },
+  ])
 }
 
 MovieSchema.statics.getMovieCount = function (perPage) {
   return this.countDocuments();
+}
+
+MovieSchema.statics.getGenres = function () {
+  return this.aggregate([
+    {
+      $unwind: "$genres"
+    },
+    {
+      $group: {
+        _id: "$genres.id",
+        name: { $first: "$genres.name" }
+      }
+    },
+    {
+      $sort: {
+        name: 1
+      }
+    }
+  ])
 }
 
 export default mongoose.model('Movies', MovieSchema);

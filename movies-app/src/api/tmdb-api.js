@@ -1,19 +1,6 @@
-const allowedSortingCodes = [
-  "popularity.asc", 
-  "popularity.desc",
-  "release_date.asc",
-  "release_date.desc",
-  "revenue.asc",
-  "revenue.desc",
-  "primary_release_date.asc",
-  "primary_release_date.desc",
-  // "original_title.asc",
-  // "original_title.desc",
-  "vote_average.asc",
-  "vote_average.desc",
-  "vote_count.asc",
-  "vote_count.desc"
-]
+const allowedSortingCodes = ["popularity.asc","popularity.desc","release_date.asc","release_date.desc","revenue.asc","revenue.desc","primary_release_date.asc","primary_release_date.desc","vote_average.asc","vote_average.desc","vote_count.asc","vote_count.desc"]
+
+const service_url = "http://localhost:8080";
 
 export const getMovies = (args) => {
   var [, pagePart, sorting, genre] = args.queryKey;
@@ -24,12 +11,13 @@ export const getMovies = (args) => {
     genre = -1;	
   }
 
+  const url = `${service_url}/api/movies/discover?page=${pagePart}&with_genre=${genre}&sort_by=${sorting}`
   return fetch(
-    `http://localhost:8080/api/movies?page=${pagePart}&with_genres=${genre}&sort_by=${sorting}`,
+    url,
     {
       headers: {
-        Authorization: `Bearer ${process.env.REACT_APP_TMDB_KEY }`
-      }
+        Authorization: `Bearer ${process.env.REACT_APP_LOCAL_API_KEY}`,
+      },
     }
   ).then((response) => {
     if (!response.ok) {
@@ -104,8 +92,14 @@ export const getMovieReviews = (id) => {
 
 export const getUpcomingMovies = (args) => {
   const [, pagePart] = args.queryKey;
+  const url = `${service_url}/api/movies/upcoming?page=${pagePart}`
   return fetch(
-    `https://api.themoviedb.org/3/movie/upcoming?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&page=${pagePart}`
+    url,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_LOCAL_API_KEY}`,
+      },
+    }
   ).then((response) => {
     if (!response.ok) {
       throw new Error(response.json().message);
@@ -118,8 +112,14 @@ export const getUpcomingMovies = (args) => {
 };
 
 export const getPopularMovies = () => {
+  const url = `${service_url}/api/movies/popular`
   return fetch(
-    `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&page=1`
+    url,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_LOCAL_API_KEY}`,
+      },
+    }
   ).then((response) => {
     if (!response.ok) {
       throw new Error(response.json().message);
