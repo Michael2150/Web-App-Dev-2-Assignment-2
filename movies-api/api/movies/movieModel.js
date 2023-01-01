@@ -110,7 +110,7 @@ MovieSchema.statics.getPageMovies = function (page, perPage, genre, sortingCode,
   ])
 }
 
-MovieSchema.statics.getMovieCount = function (perPage) {
+MovieSchema.statics.getMovieCount = function () {
   return this.countDocuments();
 }
 

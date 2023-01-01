@@ -20,6 +20,8 @@ const TemplateShowPage = ({ show, children }) => {
   if (isError) {
     return <h1>{error.message}</h1>;
   }
+
+  console.log(data)
   const images = data.posters 
 
   return (

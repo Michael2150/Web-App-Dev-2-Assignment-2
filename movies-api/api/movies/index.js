@@ -1,5 +1,4 @@
 import express from 'express';
-import uniqid from 'uniqid';
 import movieModel from './movieModel';
 import asyncHandler from 'express-async-handler';
 
@@ -86,7 +85,7 @@ router.get('/popular', asyncHandler(async (req, res) => {
 // Get movie genres
 router.get('/genres', asyncHandler(async (req, res) => {
     const genres = await movieModel.getGenres();
-    res.status(200).json(genres);
+    res.status(200).json({genres: genres});
 }));
 
 // Get movie details
@@ -100,5 +99,27 @@ router.get('/:id', asyncHandler(async (req, res) => {
     }
 }));
 
+// Get movie images
+router.get('/:id/images', asyncHandler(async (req, res) => {
+    // Get the movie id from the URL
+    const id = parseInt(req.params.id);
+    // Construct the URL for the movie images API
+    const url = `https://api.themoviedb.org/3/movie/${id}/images?api_key=${process.env.REACT_APP_TMDB_KEY}`;
+    // Redirect to the movie images API
+    res.redirect(url);
+}));
+
+
+// Get movie reviews
+router.get('/:id/reviews', asyncHandler(async (req, res) => {
+
+}));
+
+// Game Development Practicum results
+// 20% x 86% = 17.2%
+// 10% x 69% = 6.9%
+// 15% x 55% = 8.25%
+// 15% x 60% = 6.75%
+// Total: 39.1%
 
 export default router;

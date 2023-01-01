@@ -15,6 +15,9 @@ function ShowListPageTemplate({ shows, title, action: favourite_show_action, pag
   
   const filteredShows = shows
     .filter((m) => {
+      return m !== undefined;
+    })
+    .filter((m) => {
       return m.name.toLowerCase().search(nameFilter.toLowerCase()) !== -1;
     })
     .filter((m) => {

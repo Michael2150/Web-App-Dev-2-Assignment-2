@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import asyncHandler from 'express-async-handler';
 import movieModel from '../movies/movieModel';
+import tvShowModel from '../tv shows/tvShowModel';
 
 const fetch = require('isomorphic-fetch');
 const router = express.Router(); 
@@ -74,6 +75,64 @@ router.get('/', asyncHandler(async (req, res) => {
         if (i == data.total_pages) break;
     }
     console.log("Upcoming movies synced.")
+
+    // Save a tv show to the database
+    const saveTvShow = async (tvShow, isUpcoming) => {
+        const url = `https://api.themoviedb.org/3/tv/${tvShow.id}?api_key=${key}&language=en-US`;
+        const response = await fetch(url);
+        const data = await response.json();
+        var tvShowDetails = data;
+
+        //add a new "isUpcoming" property to the movie object
+        tvShowDetails.isUpcoming = isUpcoming;
+
+        //Check if the tv show's id is already in the database
+        const tvShowExists = await tvShowModel.findOne({
+            id: tvShowDetails.id
+        });
+        //If the tv show is not in the database, add it
+        if (!tvShowExists) {
+            tvShowModel.create(tvShowDetails);
+        }
+    }
+
+    //Fetch all the tv shows from the TMDB API
+    console.log(`Syncing ${pages} pages of discover tv shows from TMDB API...`)
+    for (let i = 1; i <= pages; i++) {
+        const url = `https://api.themoviedb.org/3/discover/tv?api_key=${key}&language=en-US&include_adult=false&include_video=false&page=${i}`
+        const response = await fetch(url);
+        const data = await response.json();
+        const tvShows = data.results;
+
+        //Get the details of each tv show
+        for (let j = 0; j < tvShows.length; j++) {
+            const tvShow = tvShows[j];
+            saveTvShow(tvShow, false)
+        }
+
+        //If the total number of pages is less than the number of pages to sync, break the loop
+        if (i == data.total_pages) break;
+    }
+    console.log("Discover tv shows synced.")
+
+    //Fetch all the upcoming tv shows from the TMDB API
+    console.log(`Syncing ${pages} pages of upcoming tv shows from TMDB API...`)
+    for (let i = 1; i <= pages; i++) {
+        const url = `https://api.themoviedb.org/3/tv/on_the_air?api_key=${key}&language=en-US&include_adult=false&include_video=false&page=${i}`
+        const response = await fetch(url);
+        const data = await response.json();
+        const tvShows = data.results;
+
+        //Get the details of each tv show
+        for (let j = 0; j < tvShows.length; j++) {
+            const tvShow = tvShows[j];
+            saveTvShow(tvShow, true)
+        }
+
+        //If the total number of pages is less than the number of pages to sync, break the loop
+        if (i == data.total_pages) break;
+    }
+    console.log("Upcoming tv shows synced.")
 
     //Send a response to the client
     res.send({ message: `${pages} pages of data synced.` });

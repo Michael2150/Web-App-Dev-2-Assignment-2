@@ -9,7 +9,6 @@ import WriteReview from "../../components/cardIcons/writeReview";
 
 const FavouriteMoviesPage = () => {
   const {favourites: movieIds } = useContext(MoviesContext);
-  console.log(movieIds);
 
   // Create an array of queries and run in parallel.
   const favouriteMovieQueries = useQueries(
@@ -28,8 +27,10 @@ const FavouriteMoviesPage = () => {
   }
 
   const movies = favouriteMovieQueries.map((q) => {
-    q.data.genre_ids = q.data.genres.map(g => g.id)
-    return q.data
+    if (q.data && q.data.genres) {
+      q.data.genre_ids = q.data.genres.map(g => g.id);
+    }
+    return q.data || {};
   });
 
   return (

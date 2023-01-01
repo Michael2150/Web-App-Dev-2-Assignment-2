@@ -12,8 +12,11 @@ function MovieListPageTemplate({ movies, title, action: favourite_movie_action, 
   const [sortDirectionFilter, setSortDirectionFilter] = useState("desc");
   const [currentPage, setCurrentPage] = useState(page_data ? Number(page_data.page) : 1);
   const genreId = Number(genreFilter);
-  
+
   const filteredMovies = movies
+    .filter((m) => {
+      return m.title !== undefined;
+    })
     .filter((m) => {
       return m.title.toLowerCase().search(nameFilter.toLowerCase()) !== -1;
     })

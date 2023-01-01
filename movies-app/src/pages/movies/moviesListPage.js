@@ -45,7 +45,7 @@ const MoviesListPage = (props) => {
       page_data={
         {
           page: page,
-          totalPages: 500,
+          totalPages: Math.min(data.total_pages, 500),
           onPageChange: (p) => {
             navigate(`/movies/${p}`);
           }
@@ -55,4 +55,5 @@ const MoviesListPage = (props) => {
     />
   );
 };
+
 export default MoviesListPage;
