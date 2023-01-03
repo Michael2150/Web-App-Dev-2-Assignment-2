@@ -7,7 +7,7 @@ import tvShowModel from '../tv shows/tvShowModel';
 const fetch = require('isomorphic-fetch');
 const router = express.Router(); 
 
-router.get('/', asyncHandler(async (req, res) => {
+router.post('/', asyncHandler(async (req, res) => {
     console.log("Syncing data from TMDB API...")
 
     //Get the API key from the environment variable
