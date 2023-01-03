@@ -109,17 +109,4 @@ router.get('/:id/images', asyncHandler(async (req, res) => {
     res.redirect(url);
 }));
 
-
-// Get movie reviews
-router.get('/:id/reviews', asyncHandler(async (req, res) => {
-
-}));
-
-// Game Development Practicum results
-// 20% x 86% = 17.2%
-// 10% x 69% = 6.9%
-// 15% x 55% = 8.25%
-// 15% x 60% = 6.75%
-// Total: 39.1%
-
 export default router;

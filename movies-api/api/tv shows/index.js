@@ -82,13 +82,11 @@ router.get('/popular', asyncHandler(async (req, res) => {
     });
 }));
 
-
 // Get the list of genres
 router.get('/genres', asyncHandler(async (req, res) => {
     const genres = await tvShowModel.getGenres();
     res.status(200).json({genres: genres});
 }));
-
 
 // Get TV show details
 router.get('/:id', asyncHandler(async (req, res) => {
@@ -101,10 +99,14 @@ router.get('/:id', asyncHandler(async (req, res) => {
     }
   }));
   
-
-// Get movie images
+// Get TV show images
 router.get('/:id/images', asyncHandler(async (req, res) => {
-    res.status(200).json({message: 'Not implemented yet.'});
+    // Get the TV show id from the URL
+    const id = parseInt(req.params.id);
+    // Construct the URL for the TV show images API
+    const url = `https://api.themoviedb.org/3/tv/${id}/images?api_key=${process.env.REACT_APP_TMDB_KEY}`;
+    // Redirect to the TV show images API
+    res.redirect(url);
 }));
 
 export default router;

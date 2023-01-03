@@ -66,7 +66,7 @@ const ShowDetails = ({ show }) => {
           </li>
         ))}
       </Paper>
-      <Paper 
+      {/* <Paper 
         component="ul" 
         sx={root}
       >
@@ -78,7 +78,7 @@ const ShowDetails = ({ show }) => {
             <Chip label={c.name} sx={chip} />
           </li>
         ))}
-      </Paper>
+      </Paper> */}
       <Fab
         color="secondary"
         variant="extended"

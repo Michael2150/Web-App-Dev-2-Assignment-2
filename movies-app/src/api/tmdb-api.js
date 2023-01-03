@@ -115,7 +115,6 @@ export const getMovieImages = ({ queryKey }) => {
   const [, idPart] = queryKey;
   const { id } = idPart;
   return fetch(
-    //`https://api.themoviedb.org/3/movie/${id}/images?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en`
     `${service_url}/api/movies/${id}/images`,
     {
       headers: {
@@ -150,10 +149,9 @@ export const getShows = (args) => {
     sorting = "popularity.desc";
   }
   if (!genre){
-    genre = "";
+    genre = -1;
   }
   return fetch(
-   //`https://api.themoviedb.org/3/discover/tv?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-uk&page=${pagePart}&with_genres=${genre}&sort_by=${sorting}`
     `${service_url}/api/tv/discover?page=${pagePart}&with_genre=${genre}&sort_by=${sorting}`,
     {
       headers: {
@@ -175,7 +173,6 @@ export const getShow = (args) => {
   const [, idPart] = args.queryKey;
   const { id } = idPart;
   return fetch(
-    //`https://api.themoviedb.org/3/tv/${id}?api_key=${process.env.REACT_APP_TMDB_KEY}`
     `${service_url}/api/tv/${id}`,
     {
       headers: {
@@ -195,7 +192,12 @@ export const getShow = (args) => {
 
 export const getShowsGenres = async () => {
   return fetch(
-    "https://api.themoviedb.org/3/genre/tv/list?api_key=" + process.env.REACT_APP_TMDB_KEY + "&language=en-US"
+    `${service_url}/api/tv/genres`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_LOCAL_API_KEY}`,
+      },
+    }
   ).then( (response) => {
     if (!response.ok) {
       throw new Error(response.json().message);
@@ -236,7 +238,12 @@ export const getShowReviews = (id) => {
 export const getUpcomingShows = (args) => {
   const [, pagePart] = args.queryKey;
   return fetch(
-    `https://api.themoviedb.org/3/tv/on_the_air?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&page=${pagePart}`
+    `${service_url}/api/tv/upcoming?page=${pagePart}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_LOCAL_API_KEY}`,
+      },
+    }
   ).then((response) => {
     if (!response.ok) {
       throw new Error(response.json().message);
@@ -250,7 +257,12 @@ export const getUpcomingShows = (args) => {
 
 export const getPopularShows = () => {
   return fetch(
-    `https://api.themoviedb.org/3/tv/popular?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&page=1`
+    `${service_url}/api/tv/popular`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_LOCAL_API_KEY}`,
+      },
+    }
   ).then((response) => {
     if (!response.ok) {
       throw new Error(response.json().message);
